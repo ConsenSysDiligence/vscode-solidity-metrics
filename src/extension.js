@@ -658,6 +658,53 @@ function onActivate(context) {
             });
           },
         );
+        return metrics;
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "solidity-metrics.api.report.getData",
+      async (selectedFiles) => {
+        if (selectedFiles.lenght == 0) {
+          return; // no file selected, skip
+        }
+
+        let metrics = new SolidityMetricsContainer(
+          vscode.workspace.name,
+          {
+            basePath: vscode.workspace.name + "/",
+            inputFileGlobExclusions:
+              settings.extensionConfig().file.exclusions.glob,
+            inputFileGlob: undefined,
+            inputFileGlobLimit: settings.extensionConfig().file.limit,
+            debug: settings.extensionConfig().debug,
+            repoInfo: {
+              branch: undefined,
+              commit: undefined,
+              remote: undefined,
+            }
+          },
+        );
+
+        for(const f of selectedFiles){
+          metrics.analyze(f.fsPath);
+        }
+
+        let dotGraphs = {};
+        try {
+          let tmp = metrics.getDotGraphs();
+          dotGraphs.inheritance = tmp["#surya-inheritance"];
+          dotGraphs.callgraph = tmp["#surya-callgraph"];
+        } catch (error) {
+          console.log(error);
+        }
+        return {
+          markdown: await metrics.generateReportMarkdown(),
+          totals: metrics.totals(),
+          graphs: dotGraphs
+        }
       },
     ),
   );
