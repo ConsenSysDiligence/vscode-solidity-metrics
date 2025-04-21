@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.0.26
+- provide API to other extensions - #27
+- update: dependencies
+
 ## v0.0.25
 - update: dependencies surya fixing sha1sums in mdreport
 

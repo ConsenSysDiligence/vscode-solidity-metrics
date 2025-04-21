@@ -2,7 +2,7 @@
     "name": "solidity-metrics",
     "displayName": "Solidity Metrics",
     "description": "Solidity Metrics",
-    "version": "0.0.25",
+    "version": "0.0.26",
     "keywords": [
         "code",
         "metrics",
@@ -17,7 +17,7 @@
     "publisher": "tintinweb",
     "icon": "images/icon.png",
     "engines": {
-        "vscode": "^1.40.2"
+        "vscode": "^1.95.0"
     },
     "categories": [
         "Other"
@@ -113,5 +113,6 @@
         "prettier": "^3.2.5",
         "webpack": "^5.91.0",
         "webpack-cli": "^5.0.1"
-    }
+    },
+    "license": "MIT"
 }
