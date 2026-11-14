@@ -13,6 +13,13 @@ const {
   InteractiveWebviewGenerator,
 } = require("./features/interactiveWebview.js");
 const { SolidityMetricsContainer } = require("solidity-code-metrics");
+const {
+  contextMenuGlob,
+  truffleGlob,
+  excludedFilesGlob,
+  activeFileGlob,
+  scopeFilePatterns,
+} = require("./paths");
 const fs = require("fs");
 const path = require("path");
 
@@ -220,11 +227,9 @@ async function computeMetricsFromScopeFile(
   webView,
 ) {
   if (fs.existsSync(resolvedScopeFilePath)) {
-    const patterns = fs
-      .readFileSync(resolvedScopeFilePath, "utf-8")
-      .split(/\r?\n/)
-      .filter(Boolean)
-      .map(p => path.resolve(p).replace(/^(\.?\/)/, "")); //replace "./" path prefix if present
+    const patterns = scopeFilePatterns(
+      fs.readFileSync(resolvedScopeFilePath, "utf-8"),
+    );
 
     const wsPath = workspaceFolder.uri.fsPath + "/";
 
@@ -321,7 +326,7 @@ function onActivate(context) {
             repoInfo: getWsGitInfo(wsPath),
           },
         );
-        metrics.inputFileGlob = document.fileName.replace(metrics.basePath, "");
+        metrics.inputFileGlob = activeFileGlob(metrics, document.fileName);
 
         metrics.analyze(document.fileName);
 
@@ -514,19 +519,11 @@ function onActivate(context) {
             repoInfo: getWsGitInfo(wsPath),
           },
         );
-        metrics.inputFileGlob =
-          "{" +
-          selectedFiles
-            .map((x) => {
-              if (x.fsPath.endsWith(".sol")) {
-                return x.fsPath.replace(metrics.basePath, "");
-              } else if (x.fsPath == wsPath || x.fsPath == metrics.basePath) {
-                return "**/*.sol"; //special case: workspace selected
-              }
-              return x.fsPath.replace(metrics.basePath, "") + "/**/*.sol";
-            })
-            .join(",") +
-          "}";
+        metrics.inputFileGlob = contextMenuGlob(
+          metrics,
+          wsPath,
+          selectedFiles.map((x) => x.fsPath),
+        );
 
         vscode.window.withProgress(
           {
@@ -560,17 +557,10 @@ function onActivate(context) {
               });
 
             //discover truffle projects
-            let truffleFileGlob =
-              "{" +
-              selectedFiles
-                .map((x) =>
-                  x.fsPath.endsWith(".sol")
-                    ? x.fsPath.replace(metrics.basePath, "")
-                    : x.fsPath.replace(metrics.basePath, "") +
-                      "/**/truffle*.js",
-                )
-                .join(",") +
-              "}";
+            let truffleFileGlob = truffleGlob(
+              metrics,
+              selectedFiles.map((x) => x.fsPath),
+            );
 
             await vscode.workspace
               .findFiles(
@@ -592,26 +582,11 @@ function onActivate(context) {
             //list excluded files
 
             // {**/node_modules,**/mock*,**/test*,**/migrations,**/Migrations.sol}
-            let excludeFilesGlobArray = metrics.inputFileGlobExclusions
-              .replace("{", "")
-              .replace("}", "")
-              .split(",");
-            let excludeFilesGlob = [];
-
-            for (let sFile of selectedFiles) {
-              if (sFile.fsPath.endsWith(".sol")) {
-                //ignore explicitly selected files
-                continue;
-              }
-              for (let g of excludeFilesGlobArray) {
-                excludeFilesGlob.push(
-                  sFile.fsPath.replace(metrics.basePath, "") +
-                    "/" +
-                    g +
-                    "/**/*.sol",
-                );
-              }
-            }
+            let excludeFilesGlob = excludedFilesGlob(
+              metrics,
+              selectedFiles.map((x) => x.fsPath),
+              metrics.inputFileGlobExclusions,
+            );
             if (excludeFilesGlob.length) {
               await vscode.workspace
                 .findFiles(

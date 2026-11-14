@@ -104,10 +104,11 @@
     },
     "scripts": {
         "build:web": "webpack --entry ./websrc/main.js -o ./content/ --mode='production'",
-        "format": "prettier --write \"src/**/*.{js,ts,json,css}\""
+        "format": "prettier --write \"src/**/*.{js,ts,json,css}\"",
+        "test": "node --test \"test/**/*.test.js\""
     },
     "dependencies": {
-        "solidity-code-metrics": "^0.0.28"
+        "solidity-code-metrics": "^0.0.29"
     },
     "devDependencies": {
         "prettier": "^3.2.5",
