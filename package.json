@@ -2,7 +2,7 @@
     "name": "solidity-metrics",
     "displayName": "Solidity Metrics",
     "description": "Solidity Metrics",
-    "version": "0.0.26",
+    "version": "0.0.27",
     "keywords": [
         "code",
         "metrics",

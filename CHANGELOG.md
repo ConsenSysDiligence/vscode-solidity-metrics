@@ -1,6 +1,6 @@
 # Change Log
 
-## v0.0.27 (unreleased)
+## v0.0.27
 - fix: "No valid solidity source files found" when using the explorer context menu on Windows - #19
 - fix: scope file entries were resolved against VS Code's working directory instead of the workspace; `\` separators and surrounding whitespace are now accepted
 - fix: truffle project and excluded-file discovery built absolute globs on Windows, and when the workspace root was selected
