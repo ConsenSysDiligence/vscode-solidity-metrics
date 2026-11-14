@@ -4,14 +4,19 @@
 - fix: "No valid solidity source files found" when using the explorer context menu on Windows - #19
 - fix: scope file entries were resolved against VS Code's working directory instead of the workspace; `\` separators and surrounding whitespace are now accepted
 - fix: truffle project and excluded-file discovery built absolute globs on Windows, and when the workspace root was selected
-- update: solidity-code-metrics 0.0.29
+- update: solidity-code-metrics 0.0.29 ([Changelog](https://github.com/ConsenSys/solidity-metrics/blob/master/CHANGELOG.md)), which changes the report:
+  - low-level calls (`call`, `delegatecall`, `staticcall`) are detected in the `call{value: v}(...)` form and in inline assembly; internal functions named `call` no longer count
+  - calls with options (`t.call{value: v}(...)`, `new C{salt: s}()`) are counted, so ETH transfers and deployments using them are detected
+  - new `logicContracts` metric (contracts + libraries + abstract contracts)
+  - file paths are shown relative to the workspace on Windows and in folders whose names contain `(`, `)` or `.`
+  - the compiler-features risk rating no longer reports MEDIUM for files without `pragma experimental`
 - new: `npm test` (node:test) for the glob building
 
 ## v0.0.26
 - provide API to other extensions - #27
 - update: dependencies
 
-x## v0.0.25
+## v0.0.25
 - update: dependencies surya fixing sha1sums in mdreport
 
 ## v0.0.24

@@ -10,13 +10,37 @@ Generate Source Code Metrics, Complexity and Risk profile reports for projects w
 
 ![vscode-solidity-metrics3](https://user-images.githubusercontent.com/2865694/78451004-0252de00-7683-11ea-93d7-4c5dc436a14b.gif)
 
-The report can be exported from the editors title context menu or by executing `cmd + shift + p` → `Solidity Metrics: Export current metrics report`.
+## Usage
+
+- **Explorer:** right-click one or more `.sol` files or folders → `Solidity: Metrics`.
+- **Command palette** (`cmd + shift + p`):
+  - `Solidity Metrics: Report metrics for all open workspaces`
+  - `Solidity Metrics: Report metrics for current file`
+  - `Solidity Metrics: Analyze Solidity Using Scope File`
+
+The report can be exported from the editors title context menu or by executing `cmd + shift + p` → `Solidity Metrics: Export This Metrics Report`.
 
 <img src=https://user-images.githubusercontent.com/2865694/81049773-20e50880-8ebf-11ea-88b9-9f4f9079e2c8.png height=300>
 
-Supports `scopefile.txt` format:
+### Scope file
+
+A scope file lists one file or glob per line, relative to the workspace folder. Blank lines are ignored, and a leading `./` and Windows `\` separators are accepted.
+
+```
+src/Token.sol
+src/governance/*.sol
+./lib/utils/**/*.sol
+```
+
+Right-click a file named `scope.txt` (setting `solidity-metrics.scopefile.name`) → `Solidity: Metrics`, or run `Solidity Metrics: Analyze Solidity Using Scope File` and enter its path relative to the workspace folder.
 
 <img src=https://github.com/Consensys/vscode-solidity-metrics/assets/2865694/4de84e65-83dc-46e0-8328-d913ab027d2c height=300>
+
+## Settings
+
+- `solidity-metrics.file.exclusions.glob`: paths to leave out of the analysis (default `{**/node_modules,**/mock*,**/test*,**/migrations,**/Migrations.sol}`)
+- `solidity-metrics.file.limit`: maximum number of files to analyze (default `2000`)
+- `solidity-metrics.scopefile.name`: scope file name the explorer context menu recognizes, and the default path for `Analyze Solidity Using Scope File` (default `scope.txt`)
 
 
 ## Credits
